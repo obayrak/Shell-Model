@@ -10,7 +10,7 @@ Everything is in a single `index.html` file. There is no backend, no build step 
 
 ## Features
 
-The app has two modes, selected with the tabs at the top.
+The app has three tabs.
 
 ### 1. Bound states
 
@@ -38,7 +38,29 @@ The app has two modes, selected with the tabs at the top.
   - the measured Jπ, labelled *measured*, *tentative* or *systematics estimate*, compared with the model's prediction for any A and Z
   - the half-life or stability
   - one- and two-nucleon separation energies (Sₙ, Sₚ, S₂ₙ/2, S₂ₚ/2) computed from the mass excesses, compared with the model's last filled level, and shown as a line on the level diagram
+- **Nilsson diagram for deformed nuclei:** single-particle orbitals of the modified-oscillator (Nilsson) model plotted against quadrupole deformation ε₂, from oblate to prolate, with an adjustable hexadecapole ε₄. Orbitals carry their asymptotic labels Ω^π[N n_z Λ] and their spherical origin. The diagram also shows:
+  - the Fermi level
+  - the predicted ground-state Jπ: I = Ω for odd-A nuclei, and the Gallagher–Moszkowski rule for odd–odd nuclei
+  - shading over the ε₂ ranges where that prediction matches NUBASE2020
+
+  κ and μ come from Bengtsson & Ragnarsson (1985). For nuclei in the deformed regions, the Jπ card also gives the Nilsson result next to the spherical one.
 - **Levels against a parameter:** plots every single-particle energy while sweeping N (isotopes), Z (isotones), A (along the valley of stability), κ, V₀, r₀ or a. The model Fermi level is drawn as a thick line, and measured −S and −S₂/2 from NUBASE2020 are overlaid. Click the plot to jump to that value.
+
+### 3. Theory
+
+A built-in reference that documents every method in the app, with equations typeset by MathJax and a contents list that follows your scroll position:
+
+- the radial equation, reduced mass and Coulomb charge distribution
+- the finite-difference matrix, Sturm-sequence bisection and inverse iteration, with all numerical settings and tolerances
+- the threshold and box-size tests, observables, WKB with the Langer correction, and the exact benchmark formulas
+- a reference for all 17 potentials, generated from the code
+- the spherical shell model: Woods–Saxon with spin–orbit and Coulomb, filling, the shell-gap detection rule, and the Nordheim rules
+- the NUBASE2020 data handling and separation energies
+- the parameter sweep
+- the Nilsson model: stretched coordinates, matrix elements, the κ and μ table, Jacobi diagonalisation, asymptotic labels and the Gallagher–Moszkowski rule
+- accuracy, limitations and references
+
+Sections can be linked directly, for example `index.html#th-nilsson`.
 
 ### General
 
@@ -66,7 +88,7 @@ Units are MeV and fm, with ℏc = 197.327 MeV·fm and e²/4πε₀ = 1.44 MeV·f
 
 ## Limitations
 
-- The shell model is the extreme single-particle picture. It ignores the residual interaction, configuration mixing and deformation, so predictions for deformed nuclei (for example A ≈ 150–190 or A ≥ 222) are only a rough guide.
+- The spherical shell model is the extreme single-particle picture and ignores the residual interaction and configuration mixing. For deformed nuclei (for example A ≈ 150–190 or A ≥ 222), use the Nilsson diagram instead. The Nilsson model here leaves out pairing, Coriolis mixing and couplings between different oscillator shells, so its predicted spin can change when two orbitals lie close to the Fermi level.
 - States whose wavefunction reaches the box edge are marked ⚠. Increase r_max for accurate energies.
 - Positive-energy states held in by a barrier are quasi-bound, marked ≈. Their energies depend on the box size.
 

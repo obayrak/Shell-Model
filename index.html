@@ -211,6 +211,33 @@ input:disabled{opacity:.55}
 .btn.primary:hover{color:var(--accent-ink);filter:brightness(1.08)}
 .sw-progress{font-size:.9rem;color:var(--muted);min-height:1.4em}
 @media(max-width:760px){.sw-controls{grid-template-columns:1fr 1fr 1fr}.sw-controls .field:first-child{grid-column:1 / -1}}
+.th-layout{display:grid;grid-template-columns:250px minmax(0,1fr);gap:20px;padding:20px 22px 28px;max-width:1300px;margin:0 auto;align-items:start}
+.th-toc{position:sticky;top:78px;max-height:calc(100vh - 96px);overflow-y:auto}
+.th-toc ol{padding-left:20px;font-size:.93rem;line-height:1.55}
+.th-toc a{color:var(--text-2);text-decoration:none}
+.th-toc a:hover,.th-toc a.on{color:var(--accent)}
+.th-body{display:flex;flex-direction:column;gap:18px;min-width:0}
+.th{font-family:var(--font-read);color:var(--text-2);font-size:1.02rem;scroll-margin-top:80px}
+.th h2{font-family:var(--font-ui);font-size:1.25rem;color:var(--text);margin-bottom:12px}
+.th h3{font-family:var(--font-ui);font-size:1.04rem;color:var(--text);margin:18px 0 6px}
+.th p{margin:8px 0}
+.th ul,.th ol{margin:8px 0 8px 22px}
+.th li{margin:4px 0}
+.th b{color:var(--text)}
+.th-eq mjx-container[display="true"]{max-width:100%;overflow-x:auto;overflow-y:hidden;padding:2px 0}
+.th{min-width:0}
+.th mjx-container:not([display]){display:inline-block;max-width:100%;overflow-x:auto;overflow-y:hidden;vertical-align:middle}
+.th-eq{max-width:100%;background:var(--surface-2);border:1px solid var(--line);border-radius:8px;padding:6px 14px;margin:10px 0;overflow-x:auto;color:var(--text)}
+.th-table td{font-family:var(--font-read);white-space:normal;text-align:left;font-size:.94rem;vertical-align:top}
+.th-table th{text-align:left}
+.th-table tbody tr{cursor:default}
+.th-pot{border-top:1px solid var(--line);padding:10px 0}
+.th-pot:first-child{border-top:0}
+.th-pot h4{font-family:var(--font-ui);font-size:1rem;color:var(--text);display:flex;align-items:center;gap:8px}
+.th-pot .formula{margin:6px 0}
+.th-pot .prm{font-family:var(--font-num);font-size:.84rem;color:var(--muted)}
+.th-refs li{font-size:.96rem}
+@media(max-width:980px){.th-layout{grid-template-columns:minmax(0,1fr);padding:14px}.th-toc{position:static;max-height:none}}
 @media(max-width:1100px){.shell-grid{grid-template-columns:1fr}}
 @media(max-width:980px){.layout{grid-template-columns:1fr;padding:14px}.tabs{margin-left:0}.content{order:-1}.top{position:static}}
 @media(max-width:560px){.top{padding:10px 12px}.units{display:none}.brand p{display:none}.info dl{grid-template-columns:1fr}.two{grid-template-columns:1fr}}
@@ -235,6 +262,8 @@ input:disabled{opacity:.55}
 })();
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/plotly.js/2.27.0/plotly.min.js" crossorigin="anonymous"></script>
+<script>window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},chtml:{scale:1.0},startup:{typeset:false}};</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js" async crossorigin="anonymous"></script>
 </head>
 <body>
 <header class="top">
@@ -245,6 +274,7 @@ input:disabled{opacity:.55}
   <nav class="tabs" role="tablist" aria-label="Simulator mode">
     <button class="tab on" role="tab" aria-selected="true" data-mode="states">Bound states</button>
     <button class="tab" role="tab" aria-selected="false" data-mode="shell">Nuclear shell model</button>
+    <button class="tab" role="tab" aria-selected="false" data-mode="theory">Theory</button>
   </nav>
   <span class="units">MeV · fm · ℏc = 197.327 MeV·fm</span>
   <div class="theme-sw" role="group" aria-label="Colour theme"><button type="button" data-m="night" title="Night mode" aria-label="Night mode">&#9790;</button><button type="button" data-m="day" title="Day mode" aria-label="Day mode">&#9728;</button></div>
@@ -454,12 +484,342 @@ input:disabled{opacity:.55}
         <div class="legend" id="sw-legend"></div>
         <p class="note" id="sw-note"></p>
       </div>
+      <div class="card" id="nil-card">
+        <h2>Deformed nuclei: Nilsson diagram <span class="hint">click the plot to set ε₂</span></h2>
+        <p class="intro" style="font-size:.96rem">Far from closed shells most nuclei are not spherical but shaped like a rugby ball (prolate, ε₂ &gt; 0) or a disc (oblate, ε₂ &lt; 0). Deformation splits each spherical level n ℓ<sub>j</sub> into (2j+1)/2 orbitals, each labelled by its projection Ω on the symmetry axis and holding 2 nucleons. Each orbital is marked Ω<sup>π</sup>[N n<sub>z</sub> Λ] by its asymptotic quantum numbers. In the ground state of an odd-A nucleus the spin is I = Ω of the last odd nucleon's orbital.</p>
+        <div class="two" style="grid-template-columns:1.4fr 1fr;gap:6px 20px">
+          <div class="row" style="margin:4px 0"><label for="nil-eps">Quadrupole deformation ε₂</label><span class="val" id="nil-eps-v" style="min-width:150px"></span><input type="range" id="nil-eps" min="-0.45" max="0.7" step="0.01" value="0"><small>Typical ground states: rare earths ε₂ ≈ 0.25–0.30, actinides ≈ 0.20–0.25.</small></div>
+          <div class="row" style="margin:4px 0"><label for="nil-e4">Hexadecapole ε₄</label><span class="val" id="nil-e4-v"></span><input type="range" id="nil-e4" min="-0.08" max="0.08" step="0.005" value="0"><small>Usually |ε₄| ≤ 0.05. It changes the order of orbitals near the Fermi level.</small></div>
+        </div>
+        <div class="sw-opts" style="align-items:end">
+          <label class="field" style="margin:0;width:90px"><span>ε₂ from</span><input type="number" id="nil-from" step="0.05"></label>
+          <label class="field" style="margin:0;width:90px"><span>to</span><input type="number" id="nil-to" step="0.05"></label>
+          <label class="check"><input type="checkbox" id="nil-band" checked> Shade where predicted J<sup>π</sup> matches NUBASE2020</label>
+          <label class="check"><input type="checkbox" id="nil-lab" checked> Label orbitals</label>
+          <button type="button" class="btn" id="nil-reset">Typical deformation</button>
+        </div>
+        <div class="jp-card" id="nil-result" aria-live="polite" style="margin:4px 0 10px"></div>
+        <div class="canvas-box" style="height:640px"><div id="nil-plot" class="plot" role="img" aria-label="Nilsson diagram: single-particle energies against deformation"></div></div>
+        <div class="legend" id="nil-legend"></div>
+        <p class="note">Modified-oscillator (Nilsson) Hamiltonian h = ℏω₀(ε)[N + 3/2 − ⅔ε₂ρ²P₂ + 2ε₄ρ²P₄] − 2κℏω̊₀ ℓ·s − κμℏω̊₀(ℓ² − ⟨ℓ²⟩<sub>N</sub>) in stretched coordinates, with volume conservation and shells N = 0–7. κ and μ for each shell are from Bengtsson &amp; Ragnarsson, Nucl. Phys. A436 (1985) 14; ℏω̊₀ = 41 A<sup>−1/3</sup> MeV. Couplings between shells of different N are neglected. This is exact for ε₂ in stretched coordinates and an approximation for ε₄. Pairing, Coriolis mixing and the decoupling of K = ½ bands are not included, so the predicted spin can be wrong when two orbitals lie close to the Fermi level. The shaded ranges show which deformations reproduce the measured value. For odd–odd nuclei, K follows the Gallagher–Moszkowski rule.</p>
+      </div>
       <div class="card">
         <h2>Level table</h2>
         <div class="table-wrap"><table id="sh-table">
           <thead><tr><th>Level</th><th>E (MeV)</th><th>2j + 1</th><th>Total below</th><th>⟨r⟩ (fm)</th><th>r<sub>rms</sub> (fm)</th><th>Occupied</th></tr></thead>
           <tbody></tbody></table></div>
       </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═════════════════════════ MODE 3: THEORY ═════════════════════════ -->
+<section class="mode" id="mode-theory">
+  <div class="th-layout">
+    <nav class="th-toc card" aria-label="Theory contents">
+      <h2>Contents</h2>
+      <ol>
+        <li><a href="#th-overview">Overview and units</a></li>
+        <li><a href="#th-radial">Two-body problem and radial equation</a></li>
+        <li><a href="#th-solver">Numerical solution</a></li>
+        <li><a href="#th-obs">Observables</a></li>
+        <li><a href="#th-wkb">WKB approximation</a></li>
+        <li><a href="#th-exact">Exact benchmarks</a></li>
+        <li><a href="#th-potlib">Potential library reference</a></li>
+        <li><a href="#th-shell">Spherical shell model</a></li>
+        <li><a href="#th-data">Measured data (NUBASE2020)</a></li>
+        <li><a href="#th-sweep">Levels against a parameter</a></li>
+        <li><a href="#th-nilsson">Nilsson model for deformed nuclei</a></li>
+        <li><a href="#th-plot">Plotting details</a></li>
+        <li><a href="#th-limits">Accuracy and limitations</a></li>
+        <li><a href="#th-refs">References</a></li>
+      </ol>
+      <p class="note" id="th-mj-note">Equations are typeset with MathJax.</p>
+    </nav>
+
+    <div class="th-body">
+
+<article class="card th" id="th-overview">
+<h2>1. Overview and units</h2>
+<p>The simulator has two physics modes. <b>Bound states</b> solves the radial Schrödinger equation for any sum of potentials from a library of 17, for a chosen pair of particles and orbital angular momentum ℓ. <b>Nuclear shell model</b> fills Woods–Saxon single-particle levels with nucleons. It finds shell gaps and predicts ground-state spin and parity, compares them with NUBASE2020, sweeps parameters, and extends the picture to deformed nuclei with the Nilsson model. All calculations run in your browser in plain JavaScript; no server is involved.</p>
+<p>Lengths are in femtometres (1 fm = 10⁻¹⁵ m) and energies in MeV. The constants used are</p>
+<div class="th-eq">\[ \hbar c = 197.327\ \text{MeV fm},\qquad e^2/4\pi\varepsilon_0 = 1.44\ \text{MeV fm},\qquad \hbar\mathring{\omega}_0 = 41\,A^{-1/3}\ \text{MeV}. \]</div>
+<p>For atomic systems the plots switch automatically to keV or eV and to pm or Å (1 Å = 10⁵ fm), but the internal units stay MeV and fm.</p>
+</article>
+
+<article class="card th" id="th-radial">
+<h2>2. Two-body problem and radial equation</h2>
+<h3>Reduced mass</h3>
+<p>Two particles with masses m₁, m₂ that interact through a central potential V(r) are equivalent to one particle of reduced mass μ moving in V(r):</p>
+<div class="th-eq">\[ \mu=\frac{m_1 m_2}{m_1+m_2},\qquad \frac{\hbar^2}{2\mu}=\frac{(\hbar c)^2}{2\mu c^2}. \]</div>
+<p>For a "fixed centre" (m₂ = ∞) μ = m₁. For the average nucleon mass 938.919 MeV/c², ℏ²/2μ = 20.736 MeV fm².</p>
+<h3>Separation of variables</h3>
+<p>With \(\psi(r,\theta,\varphi)=\dfrac{u_\ell(r)}{r}\,Y_{\ell m}(\theta,\varphi)\), the three-dimensional equation becomes a one-dimensional one:</p>
+<div class="th-eq">\[ -\frac{\hbar^2}{2\mu}\,u''(r)+V_{\rm eff}(r)\,u(r)=E\,u(r),\qquad V_{\rm eff}(r)=V(r)+\frac{\hbar^2\,\ell(\ell+1)}{2\mu r^2}, \]</div>
+<p>with the boundary conditions u(0) = 0 (regularity at the origin) and u(r<sub>max</sub>) = 0 (a large spherical box). The normalisation is \(\int_0^{r_{\max}}u^2\,dr=1\), so \(u^2\,dr\) is the radial probability.</p>
+<h3>Total potential</h3>
+<p>V(r) is the sum of all ticked library potentials plus, when switched on, the Coulomb interaction between the two particles:</p>
+<div class="th-eq">\[ V_C(r)=\begin{cases} Z_1Z_2e^2/r, & r\ge R_c\\[4pt] \dfrac{Z_1Z_2e^2}{2R_c}\left(3-\dfrac{r^2}{R_c^2}\right), & r<R_c\end{cases} \]</div>
+<p>The inner form is the potential of a uniformly charged sphere of radius R<sub>c</sub>. It removes the 1/r singularity and makes the finite-size effect visible, for example in muonic lead. R<sub>c</sub> = 0 means point charges. The "Use 1.2(A₁<sup>1/3</sup> + A₂<sup>1/3</sup>) fm" button sets the touching-spheres radius.</p>
+<h3>Spin–orbit term</h3>
+<p>The Woods–Saxon spin–orbit potential needs ⟨ℓ·s⟩ for the selected total angular momentum j = ℓ ± ½:</p>
+<div class="th-eq">\[ \langle\boldsymbol\ell\cdot\mathbf s\rangle=\tfrac12\left[j(j+1)-\ell(\ell+1)-\tfrac34\right]=\begin{cases}+\ell/2, & j=\ell+\tfrac12\\ -(\ell+1)/2, & j=\ell-\tfrac12\end{cases} \]</div>
+<div class="th-eq">\[ V_{so}(r)=V_{so}\left(\frac{\hbar}{m_\pi c}\right)^2\frac1r\frac{dF}{dr}\,2\langle\boldsymbol\ell\cdot\mathbf s\rangle,\qquad \left(\frac{\hbar}{m_\pi c}\right)^2=\left(\frac{197.327}{139.57}\right)^2\approx 2.0\ \text{fm}^2, \]</div>
+<p>where F(r) = [1 + e<sup>(r−R)/a</sup>]<sup>−1</sup>. Because dF/dr &lt; 0, a positive V<sub>so</sub> lowers j = ℓ + ½, as observed in nuclei.</p>
+</article>
+
+<article class="card th" id="th-solver">
+<h2>3. Numerical solution of the radial equation</h2>
+<h3>Grid and finite differences</h3>
+<p>The interval (0, r<sub>max</sub>) is divided into N + 1 equal steps (N = "Grid points", default 1200):</p>
+<div class="th-eq">\[ h=\frac{r_{\max}}{N+1},\qquad r_i=i\,h,\quad i=1,\dots,N,\qquad u_0=u_{N+1}=0. \]</div>
+<p>The second derivative is replaced by the three-point formula, whose error is \(-\tfrac{h^2}{12}u^{(4)}\):</p>
+<div class="th-eq">\[ u''(r_i)\approx\frac{u_{i+1}-2u_i+u_{i-1}}{h^2}. \]</div>
+<p>The radial equation becomes the eigenvalue problem of a real symmetric tridiagonal N × N matrix T:</p>
+<div class="th-eq">\[ T_{ii}=d_i=2t+V_{\rm eff}(r_i),\qquad T_{i,i\pm1}=e=-t,\qquad t=\frac{\hbar^2}{2\mu h^2}. \]</div>
+<p>The grid starts at r₁ = h, so the 1/r and 1/r² terms are never evaluated at r = 0. Any value that is not a finite number (a hard wall) is replaced by ±10⁶ MeV.</p>
+<h3>Eigenvalues: Sturm sequence and bisection</h3>
+<p>For a trial energy x, the pivots of the LDLᵀ factorisation of T − x I are</p>
+<div class="th-eq">\[ q_1=d_1-x,\qquad q_i=d_i-x-\frac{e^2}{q_{i-1}}\quad(i=2,\dots,N). \]</div>
+<p>By Sylvester's law of inertia, the number of negative pivots S(x) equals the number of eigenvalues below x. A zero pivot is replaced by 10⁻³⁰⁰. One count costs O(N) operations and needs no storage beyond the diagonal.</p>
+<ul>
+<li><b>Lower bound:</b> Gershgorin's theorem gives every eigenvalue ≥ min<sub>i</sub> d<sub>i</sub> − 2t. The search starts from this value minus 1 MeV.</li>
+<li><b>Upper bound:</b> E<sub>cut</sub> = min("Highest energy searched", threshold V(∞)). See "Threshold" below.</li>
+<li><b>How many states:</b> K = min(S(E<sub>cut</sub>), 12).</li>
+<li><b>k-th eigenvalue (k = 0…K−1):</b> bisect the interval [lo, E<sub>cut</sub>]. If S(m) &gt; k the root lies below the midpoint m, otherwise above. Stop after 70 halvings, or when the interval width is below 10⁻¹¹ · max(1, |E|) MeV.</li>
+</ul>
+<p>This method (Barth, Martin and Wilkinson 1967) cannot skip or duplicate a level, because S(x) counts them exactly. That is why the table labels n<sub>r</sub> = k without ambiguity.</p>
+<h3>Eigenvectors: inverse iteration</h3>
+<p>For each eigenvalue λ the vector is found by inverse iteration with a tiny shift σ = λ + 10⁻¹⁰ · max(1, |λ|):</p>
+<div class="th-eq">\[ (T-\sigma I)\,\mathbf y^{(k+1)}=\mathbf y^{(k)},\qquad \mathbf y^{(k+1)}\leftarrow\mathbf y^{(k+1)}/\lVert\mathbf y^{(k+1)}\rVert. \]</div>
+<p>The tridiagonal system is solved in O(N) with the Thomas algorithm. The iteration starts from a uniform vector and does three iterations, which is enough because σ is so close to λ that the error shrinks by a huge factor at each step.</p>
+<h3>Normalisation and sign</h3>
+<p>The discrete vector v (with Σv<sub>i</sub>² = 1) is converted to the wavefunction by u<sub>i</sub> = v<sub>i</sub>/√h, so that Σ u<sub>i</sub>² h = 1 ≈ ∫u² dr. The overall sign is chosen so that u is positive near the origin.</p>
+<h3>Threshold and bound states</h3>
+<p>Only states below the continuum threshold V(∞) are bound. The code compares V at r<sub>max</sub> with V at 0.85 r<sub>max</sub>:</p>
+<ul>
+<li><b>Confining potential</b> (rises by more than 0.5 MeV over that range, or reaches 10⁵ MeV, as with oscillators, linear potentials and hard walls): every state is bound and the threshold is +∞.</li>
+<li><b>Decaying tail</b> (|V| still shrinking, as with Coulomb, Yukawa and Morse): V(∞) = 0.</li>
+<li><b>Otherwise:</b> V(∞) = V(r<sub>max</sub>).</li>
+</ul>
+<h3>Box effects</h3>
+<p>The condition u(r<sub>max</sub>) = 0 is a hard wall. A bound state is unaffected if it has decayed long before r<sub>max</sub>. The code flags a state with ⚠ when the largest |u| in the last 8 % of the grid exceeds 0.2 % of its maximum. A positive-energy state trapped behind a repulsive barrier (outer tail falling towards zero) is flagged ≈. It is a <i>quasi-bound</i> resonance whose computed energy depends on the box.</p>
+<h3>Cost</h3>
+<p>For K states: about 70 K Sturm counts of N steps each, plus 3 K tridiagonal solves. With N = 1200 and K = 12 this is about 10⁶ operations, which takes milliseconds. Changes are debounced by 40 ms while you drag a slider.</p>
+</article>
+
+<article class="card th" id="th-obs">
+<h2>4. Observables in the bound-state table</h2>
+<p>All integrals are rectangle sums on the grid, \(\int f\,dr\approx\sum_i f(r_i)\,h\):</p>
+<div class="th-eq">\[ \langle r\rangle=\sum_i r_i\,u_i^2h,\qquad r_{\rm rms}=\Big(\sum_i r_i^2\,u_i^2h\Big)^{1/2},\qquad P_{\rm forbidden}=\sum_{i:\;V_{\rm eff}(r_i)>E}u_i^2h. \]</div>
+<ul>
+<li><b>P(forbidden)</b> is the probability of finding the particle where its kinetic energy would be negative, which is impossible classically. This is tunnelling into the barrier. For the deuteron it exceeds 30 %.</li>
+<li><b>Nodes:</b> the number of sign changes of u, ignoring points where |u| &lt; 10⁻⁴ max|u| (numerical noise in the tails). It equals the radial quantum number n<sub>r</sub>. The state label is (n<sub>r</sub> + 1) ℓ, for example 2p for the second p state.</li>
+<li><b>Classical turning points:</b> the first and last grid points where V<sub>eff</sub>(r) ≤ E. They are drawn as dots on the selected level.</li>
+</ul>
+</article>
+
+<article class="card th" id="th-wkb">
+<h2>5. WKB approximation with the Langer correction</h2>
+<p>The semiclassical quantisation rule between the turning points r₁ and r₂ is</p>
+<div class="th-eq">\[ \int_{r_1}^{r_2}\sqrt{\frac{2\mu}{\hbar^2}\left[E-V(r)-\frac{\hbar^2(\ell+\frac12)^2}{2\mu r^2}\right]}\,dr=\left(n_r+\tfrac12\right)\pi . \]</div>
+<p>The Langer replacement ℓ(ℓ+1) → (ℓ+½)² corrects the behaviour of the radial WKB wavefunction near r = 0. With it the rule is exact for the three-dimensional harmonic oscillator and for the Coulomb potential.</p>
+<p><b>Numerics.</b> The phase integral Φ(E) is a rectangle sum over all grid points where the integrand is real, so wells with several allowed regions are summed together. Φ(E) increases with E, so the root of Φ(E) = (n<sub>r</sub> + ½)π is found by 60 bisection steps between min V<sub>L</sub> and max(E<sub>cut</sub>, E<sub>exact</sub> + 1). If even the upper end gives too small a phase, no WKB value is shown. The table shows E<sub>WKB</sub> and the error E<sub>WKB</sub> − E.</p>
+<p><b>Where WKB fails.</b> The ½ in (n<sub>r</sub> + ½) assumes smooth turning points. At a hard wall the matching condition changes (n<sub>r</sub> + ¾ for one wall, n<sub>r</sub> + 1 for two), so the infinite well shows a large WKB error. The infinite-well example shows this on purpose. WKB is also poor for the lowest states of shallow wells.</p>
+</article>
+
+<article class="card th" id="th-exact">
+<h2>6. Exact benchmarks</h2>
+<p>The "Exact" column is filled when exactly one library potential with a known spectrum is active and no extra Coulomb term is present, or when only the two-body Coulomb attraction acts. It lets you test the numerics.</p>
+<div class="table-wrap"><table class="th-table">
+<thead><tr><th>Potential</th><th>Exact energy</th><th>Condition</th></tr></thead>
+<tbody>
+<tr><td>Harmonic oscillator, V = A r², A = (ℏω)²/(4·ℏ²/2μ)</td><td>\(E=\hbar\omega\,(2n_r+\ell+\tfrac32)\)</td><td>power n = 2</td></tr>
+<tr><td>Linear, V = F r</td><td>\(E=a_{n_r}\,\big[(\hbar^2/2\mu)\,F^2\big]^{1/3}\), with a<sub>n</sub> the zeros of Ai(−x): 2.338, 4.088, 5.521, …</td><td>power n = 1, ℓ = 0</td></tr>
+<tr><td>Coulomb, V = −Ze²/r</td><td>\(E=-\dfrac{(Ze^2)^2}{4(\hbar^2/2\mu)\,(n_r+\ell+1)^2}\)</td><td>any ℓ</td></tr>
+<tr><td>Two-body Coulomb, Z₁Z₂ &lt; 0, R<sub>c</sub> = 0</td><td>same with Ze² → −Z₁Z₂e²</td><td>no library potential</td></tr>
+<tr><td>Kratzer, V = D<sub>e</sub>[(r<sub>e</sub>/r)² − 2r<sub>e</sub>/r]</td><td>\(E=-\dfrac{B^2}{4(\hbar^2/2\mu)(n_r+L+1)^2}\), \(B=2D_er_e\), \(L=-\tfrac12+\sqrt{(\ell+\tfrac12)^2+D_er_e^2/(\hbar^2/2\mu)}\)</td><td>any ℓ</td></tr>
+<tr><td>Infinite spherical well, radius a</td><td>\(E=\dfrac{\hbar^2}{2\mu}\Big(\dfrac{(n_r+1)\pi}{a}\Big)^2\)</td><td>ℓ = 0</td></tr>
+<tr><td>Hulthén, V = −V₀δ e<sup>−δr</sup>/(1−e<sup>−δr</sup>)</td><td>\(E=-\dfrac{V_0^2}{4(\hbar^2/2\mu)n^2}\Big(1-\dfrac{n^2\delta\,\hbar^2/2\mu}{V_0}\Big)^2\), n = n<sub>r</sub> + 1</td><td>ℓ = 0, while the bracket is positive</td></tr>
+</tbody></table></div>
+<p>For a hydrogen atom with the true reduced mass, the code reproduces E₁ = −13.598 eV and ⟨r⟩ = 1.5 a₀ when r<sub>max</sub> is large enough.</p>
+</article>
+
+<article class="card th" id="th-potlib">
+<h2>7. Potential library reference</h2>
+<p>This list is generated from the same table the simulator uses, so it always matches the code. Every potential is a function V(r; parameters) in MeV. Ticked potentials are added together.</p>
+<div id="th-potlib-list"></div>
+</article>
+
+<article class="card th" id="th-shell">
+<h2>8. Spherical shell model</h2>
+<h3>Mean-field potential</h3>
+<p>Each nucleon moves in a Woods–Saxon well with a spin–orbit term. Protons also feel the Coulomb field of the other Z − 1 protons, modelled as a uniformly charged sphere:</p>
+<div class="th-eq">\[ V(r)=-V_0\,f(r)+\kappa V_0 r_0^2\,\frac1r\frac{df}{dr}\,\langle\boldsymbol\ell\cdot\mathbf s\rangle+V_C(r),\qquad f(r)=\frac{1}{1+e^{(r-R)/a}},\quad R=r_0A^{1/3}. \]</div>
+<div class="th-eq">\[ V_C(r)=(Z-1)e^2\times\begin{cases}1/r, & r\ge R\\ (3-r^2/R^2)/(2R), & r<R\end{cases}\qquad\text{(protons only)} \]</div>
+<p>The defaults are r₀ = 1.27 fm, a = 0.67 fm and κ = 0.44. With "Depth from the Bohr–Mottelson formula" ticked, the depth includes the symmetry (isospin) term:</p>
+<div class="th-eq">\[ V_0=51\mp33\,\frac{N-Z}{A}\ \text{MeV}\qquad(-\text{ for neutrons},\ +\text{ for protons}). \]</div>
+<p>Both nucleon types use ℏ²/2m = 20.736 MeV fm². The nucleus is treated as infinitely heavy (no recoil correction).</p>
+<h3>Finding the levels</h3>
+<ul>
+<li><b>Grid:</b> r<sub>max</sub> = R + 14 fm with 800 points (h ≈ 0.025 fm for ²⁰⁸Pb). The radial equation of §3 is solved for each ℓ = 0…9 and each j = ℓ ± ½ (only j = ½ for ℓ = 0), keeping up to 8 states per (ℓ, j).</li>
+<li><b>Neutrons:</b> only states with E &lt; 0 are kept.</li>
+<li><b>Protons:</b> the search goes up to min(4 MeV, ½(Z−1)e²/(R+2 fm)), because protons slightly above zero are still held in by the Coulomb barrier.</li>
+<li><b>Labels:</b> n ℓ<sub>j</sub>, where n = 1, 2, … counts the states of the same (ℓ, j) in order of energy. This is the nuclear convention, so the first d state is 1d, not 3d.</li>
+</ul>
+<h3>Filling and occupation</h3>
+<p>The levels are sorted by energy and filled with 2j + 1 nucleons each. The running total C<sub>k</sub> = Σ<sub>i≤k</sub>(2j<sub>i</sub>+1) is the "Total below" column. A level is <i>full</i> if C<sub>k</sub> ≤ N (or Z), <i>partly filled</i> if C<sub>k</sub> − (2j+1) &lt; N &lt; C<sub>k</sub>, and otherwise <i>empty</i>.</p>
+<h3>Shell gaps and magic numbers</h3>
+<p>For consecutive levels the gap is d<sub>k</sub> = E<sub>k+1</sub> − E<sub>k</sub>. A gap is called a shell closure when all three conditions hold:</p>
+<div class="th-eq">\[ d_k\ \ge\ 1.3\,\bar d_{\rm local},\qquad d_k\ \ge\ 1.5\ \text{MeV},\qquad E_k<0, \]</div>
+<p>where \(\bar d_{\rm local}\) is the mean of up to three gaps on each side. The magic number shown is C<sub>k</sub>, and it is ticked ✓ when it is one of 2, 8, 20, 28, 50, 82, 126 or 184. Setting κ = 0 shows the oscillator-like closures 2, 8, 20, 40, 70, … instead. This is the classic argument for the spin–orbit force (Mayer and Jensen 1949).</p>
+<h3>Ground-state spin and parity (extreme single-particle model)</h3>
+<ul>
+<li><b>Even Z, even N:</b> all nucleons are paired to J = 0, so J<sup>π</sup> = 0⁺.</li>
+<li><b>Odd A:</b> the odd nucleon is in the level that contains nucleon number Z (or N), the first level with C<sub>k</sub> ≥ Z. Then J = j and π = (−1)<sup>ℓ</sup>.</li>
+<li><b>Odd–odd:</b> the odd proton (j<sub>p</sub>, ℓ<sub>p</sub>) and odd neutron (j<sub>n</sub>, ℓ<sub>n</sub>) couple according to Nordheim's rules. Let \(\mathcal N=(j_p-\ell_p)+(j_n-\ell_n)\), where each term is ±½.
+  <ul>
+  <li>If 𝒩 = 0 (strong rule): J = |j<sub>p</sub> − j<sub>n</sub>|.</li>
+  <li>If 𝒩 = ±1 (weak rule): J tends to be large, and the model shows j<sub>p</sub> + j<sub>n</sub>.</li>
+  <li>In both cases π = (−1)<sup>ℓ<sub>p</sub>+ℓ<sub>n</sub></sup>.</li>
+  </ul></li>
+</ul>
+<p>The residual interaction, configuration mixing and deformation are all ignored. That is why some predictions differ from experiment, and why the deformed regions A ≈ 150–190 and A ≥ 222 also get a Nilsson prediction (§11).</p>
+<h3>Radial wavefunction panel</h3>
+<p>Clicking a level shows V<sub>eff</sub> for its (ℓ, j) together with u(r), drawn on its energy line and scaled for visibility (the scale is arbitrary), plus ⟨r⟩ and r<sub>rms</sub> from §4.</p>
+</article>
+
+<article class="card th" id="th-data">
+<h2>9. Measured data (NUBASE2020)</h2>
+<p>The page embeds all 3,558 ground states of NUBASE2020 (Kondev et al. 2021) as a compact string of Z | A | mass excess (keV) | J<sup>π</sup> | half-life, about 86 kB. No network request is needed.</p>
+<h3>Reading Jπ</h3>
+<ul>
+<li>Parentheses mean a tentative assignment, shown as <i>tentative</i>.</li>
+<li># means a value estimated from systematics, shown as <i>systematics estimate</i>.</li>
+<li>Lists such as (3/2⁻,5/2⁻) are split into options. A parity written once applies to all values before it.</li>
+<li>A prediction (2J, π) <b>agrees</b> if it equals any listed option. If the listed parity is unknown, the spin alone decides.</li>
+</ul>
+<h3>Separation energies</h3>
+<p>From the mass excesses Δ (in keV, converted to MeV):</p>
+<div class="th-eq">\[ S_n(Z,A)=\Delta(Z,A-1)+\Delta_n-\Delta(Z,A),\qquad S_p(Z,A)=\Delta(Z-1,A-1)+\Delta_{^1\rm H}-\Delta(Z,A), \]</div>
+<div class="th-eq">\[ S_{2n}=\Delta(Z,A-2)+2\Delta_n-\Delta(Z,A),\qquad S_{2p}=\Delta(Z-2,A-2)+2\Delta_{^1\rm H}-\Delta(Z,A), \]</div>
+<p>with Δ<sub>n</sub> = 8071.318 keV and Δ(¹H) = 7288.971 keV. A value is shown only when the neighbouring nucleus is also in the table.</p>
+<h3>Model versus experiment</h3>
+<p>In the independent-particle model, removing the last nucleon costs −E<sub>last</sub> (Koopmans' theorem), so the model value is minus the energy of the last filled level. Measured S<sub>n</sub> and S<sub>p</sub> zigzag between even and odd nucleon numbers. When the removed nucleon breaks a pair, the pairing energy, about Δ ≈ 12/√A MeV, must also be paid. The averages S<sub>2n</sub>/2 and S<sub>2p</sub>/2 remove most of this odd–even staggering and are the fairer comparison. NUBASE2020 does not contain charge radii.</p>
+</article>
+
+<article class="card th" id="th-sweep">
+<h2>10. Levels against a parameter</h2>
+<p>For each value x of the swept quantity, the code builds a nucleus and potential, recomputes the neutron or proton levels with the method of §8, and records every level and the Fermi energy.</p>
+<ul>
+<li><b>N (isotopes):</b> Z is fixed and A = Z + x.</li>
+<li><b>Z (isotones):</b> N is fixed and A = x + N.</li>
+<li><b>A (valley of stability):</b> Z is taken from Green's empirical formula \(Z\approx A/(1.98+0.0155\,A^{2/3})\), rounded.</li>
+<li><b>κ, V₀, r₀ or a:</b> that parameter is varied and everything else is held fixed. V₀ follows the Bohr–Mottelson formula unless V₀ itself is swept or set by hand.</li>
+</ul>
+<p>Integer sweeps use every integer when the number of points allows it, otherwise an even integer step. A level is followed across the sweep by its label n ℓ<sub>j</sub>. The colour is set by ℓ; j = ℓ + ½ is drawn solid and j = ℓ − ½ dashed. The thick line is the energy of the level holding the last nucleon, the model Fermi level. For N, Z and A sweeps the measured −S (dots) and −S₂/2 (line) from §9 are overlaid. To keep the page responsive, the points are computed in slices of about 40 ms. Clicking the plot copies that value back into the nucleus or slider controls.</p>
+</article>
+
+<article class="card th" id="th-nilsson">
+<h2>11. Nilsson model for deformed nuclei</h2>
+<h3>Deformed oscillator and volume conservation</h3>
+<p>For an axially symmetric quadrupole shape with deformation ε (written ε₂ in the app) the oscillator frequencies are</p>
+<div class="th-eq">\[ \omega_\perp=\omega_0(\varepsilon)\left(1+\tfrac{\varepsilon}{3}\right),\qquad \omega_z=\omega_0(\varepsilon)\left(1-\tfrac{2\varepsilon}{3}\right). \]</div>
+<p>ε &gt; 0 is prolate and ε &lt; 0 oblate. The nuclear volume is kept fixed, \(\omega_\perp^2\omega_z=\mathring\omega_0^3\), which gives</p>
+<div class="th-eq">\[ \frac{\omega_0(\varepsilon)}{\mathring\omega_0}=\Big(1-\tfrac13\varepsilon^2-\tfrac{2}{27}\varepsilon^3\Big)^{-1/3}. \]</div>
+<p>The app shows β₂ ≈ ε₂/0.95, the usual first-order conversion.</p>
+<h3>Stretched coordinates</h3>
+<p>In the stretched coordinates \(\xi=x\sqrt{M\omega_\perp/\hbar}\), \(\eta=y\sqrt{M\omega_\perp/\hbar}\), \(\zeta=z\sqrt{M\omega_z/\hbar}\), the oscillator Hamiltonian is \(\tfrac12\hbar\omega_0[(-\Delta_t+\rho_t^2)(1+\tfrac{\varepsilon}{3})-\varepsilon\,h_z]\). The operator \(h_x+h_y-2h_z=-2\,[\rho^2P_2(\cos\theta_t)+p^2P_2(\cos\theta_p)]\), and inside one oscillator shell N the coordinate and momentum parts have equal matrix elements. So within a shell, exactly,</p>
+<div class="th-eq">\[ H_{\rm osc}=\hbar\omega_0(\varepsilon)\Big[N+\tfrac32-\tfrac23\,\varepsilon\,\rho^2P_2(\cos\theta_t)\Big], \]</div>
+<p>with no coupling between shells N and N ± 2. This is why the stretched basis is used. In the app's test, at κ = 0 the shell eigenvalues of ρ²P₂ are exactly \(\tfrac32(n_z+\tfrac12)-\tfrac12(N+\tfrac32)\). That reproduces \(E=\hbar\omega_\perp(n_\perp+1)+\hbar\omega_z(n_z+\tfrac12)\).</p>
+<h3>Full Hamiltonian</h3>
+<div class="th-eq">\[ h=\hbar\omega_0(\varepsilon)\Big[N+\tfrac32-\tfrac23\varepsilon_2\,\rho^2P_2+2\varepsilon_4\,\rho^2P_4\Big]-\kappa\hbar\mathring\omega_0\Big[2\,\boldsymbol\ell\cdot\mathbf s+\mu\big(\boldsymbol\ell^2-\langle\boldsymbol\ell^2\rangle_N\big)\Big],\qquad \langle\boldsymbol\ell^2\rangle_N=\tfrac12N(N+3). \]</div>
+<p>The ℓ·s term produces the spin–orbit splitting. The ℓ² term flattens the oscillator bottom towards a Woods–Saxon shape, pushing high-ℓ levels down. Subtracting ⟨ℓ²⟩<sub>N</sub> keeps the shell centroid fixed. The ε₄ (hexadecapole) term is treated inside each shell too; that is an approximation, unlike the exact ε₂ case. Energies are given in units of \(\hbar\mathring\omega_0=41A^{-1/3}\) MeV. Hovering a curve also shows MeV.</p>
+<h3>Basis and matrix elements</h3>
+<p>The basis is |N ℓ Λ Σ⟩, where Λ and Σ = ±½ are the projections of ℓ and s on the symmetry axis. Axial symmetry conserves Ω = Λ + Σ, and parity is π = (−1)<sup>N</sup>. Each block (N, Ω &gt; 0) is diagonalised separately. Its dimension is at most N + 1. The non-zero matrix elements are:</p>
+<div class="th-eq">\[ \langle N\ell|\rho^2|N\ell\rangle=N+\tfrac32,\qquad \langle N\ell|\rho^2|N,\ell+2\rangle=-\sqrt{(N-\ell)(N+\ell+3)}, \]</div>
+<div class="th-eq">\[ \langle\ell\Lambda|P_\lambda|\ell'\Lambda\rangle=\sqrt{\frac{2\ell'+1}{2\ell+1}}\;\langle\ell'0\,\lambda0|\ell0\rangle\,\langle\ell'\Lambda\,\lambda0|\ell\Lambda\rangle\qquad(\lambda=2,4), \]</div>
+<div class="th-eq">\[ \langle\ell\Lambda\Sigma|\boldsymbol\ell\cdot\mathbf s|\ell\Lambda\Sigma\rangle=\Lambda\Sigma,\qquad \langle\ell,\Lambda{+}1,-\tfrac12|\boldsymbol\ell\cdot\mathbf s|\ell,\Lambda,+\tfrac12\rangle=\tfrac12\sqrt{(\ell-\Lambda)(\ell+\Lambda+1)},\qquad \boldsymbol\ell^2=\ell(\ell+1). \]</div>
+<p>Notes on these matrix elements:</p>
+<ul>
+<li>ρ² connects only Δℓ = 0, ±2 inside a shell, so the P₄ term also acts only between ℓ and ℓ ± 2 (and ℓ itself).</li>
+<li>The sign of the off-diagonal radial element is a phase convention. The blocks are chains in ℓ, so the spectrum does not depend on it.</li>
+<li>Clebsch–Gordan coefficients are computed exactly with Racah's formula. The angular matrix was checked to be symmetric to 10⁻¹⁶.</li>
+</ul>
+<h3>Parameters</h3>
+<p>κ and μ depend on the shell N (Bengtsson and Ragnarsson 1985):</p>
+<div class="table-wrap"><table class="th-table">
+<thead><tr><th>N</th><th>0</th><th>1</th><th>2</th><th>3</th><th>4</th><th>5</th><th>6</th><th>7</th></tr></thead>
+<tbody>
+<tr><td>κ protons</td><td>0.120</td><td>0.120</td><td>0.105</td><td>0.090</td><td>0.065</td><td>0.060</td><td>0.054</td><td>0.054</td></tr>
+<tr><td>μ protons</td><td>0</td><td>0</td><td>0</td><td>0.30</td><td>0.57</td><td>0.65</td><td>0.69</td><td>0.69</td></tr>
+<tr><td>κ neutrons</td><td>0.120</td><td>0.120</td><td>0.105</td><td>0.090</td><td>0.070</td><td>0.062</td><td>0.062</td><td>0.062</td></tr>
+<tr><td>μ neutrons</td><td>0</td><td>0</td><td>0</td><td>0.25</td><td>0.39</td><td>0.43</td><td>0.34</td><td>0.26</td></tr>
+</tbody></table></div>
+<p>Shells N = 0–7 are included (120 orbitals of each type, room for 240 nucleons). At ε = 0 these parameters give the spherical magic numbers 2, 8, 20, 28, 50, 82 and 126.</p>
+<h3>Diagonalisation</h3>
+<p>Each block (at most 8 × 8) is diagonalised with the cyclic Jacobi method. Plane rotations zero each off-diagonal element in turn until the sum of their squares is below 10⁻²², or after 60 sweeps. This gives the eigenvalues and orthonormal eigenvectors together. A full diagram of 81 deformations for both nucleon types takes well under 0.1 s.</p>
+<h3>Following orbitals and their labels</h3>
+<p>Levels with the same conserved quantum numbers (N, Ω, π) cannot cross (von Neumann–Wigner rule). So "the k-th eigenvalue of block (N, Ω)" is one continuous curve for every ε, and the diagram draws exactly these curves. Each curve gets two labels:</p>
+<ul>
+<li><b>Asymptotic Ω<sup>π</sup>[N n<sub>z</sub> Λ]</b> from the eigenvector at large deformation (ε = 1). The quanta along the axis follow from \(n_z=\tfrac23\langle\rho^2P_2\rangle+\tfrac13(N+\tfrac32)-\tfrac12\), rounded. The spin projection is the sign of ⟨Σ⟩, and Λ = Ω − Σ. n<sub>z</sub> is then adjusted, if needed, so that N − n<sub>z</sub> − Λ is even, as it must be.</li>
+<li><b>Spherical origin n ℓ<sub>j</sub></b> from the eigenvector at ε = 0. ℓ is the dominant component, and j = ℓ ± ½ follows from the sign of the full ⟨ℓ·s⟩.</li>
+</ul>
+<h3>Filling, Fermi level and ground-state spin</h3>
+<p>At each ε the 120 orbital energies are sorted. Every orbital holds 2 nucleons (+Ω and −Ω, Kramers degeneracy), so nucleon number k occupies orbital ⌊(k−1)/2⌋. The thick line follows the orbital of the last nucleon (the Fermi level).</p>
+<ul>
+<li><b>Odd A:</b> the ground state is the band head with spin I = K = Ω of the odd nucleon, and π = (−1)<sup>N</sup>.</li>
+<li><b>Odd–odd:</b> the Gallagher–Moszkowski rule says the intrinsic spins prefer to be parallel. With Σ = Ω − Λ from the asymptotic labels,
+<div class="th-eq">\[ K=\begin{cases}\Omega_p+\Omega_n, & \Sigma_p=\Sigma_n\\ |\Omega_p-\Omega_n|, & \Sigma_p\ne\Sigma_n\end{cases},\qquad \pi=\pi_p\pi_n . \]</div></li>
+<li><b>Even–even:</b> 0⁺.</li>
+</ul>
+<h3>Agreement bands</h3>
+<p>The predicted J<sup>π</sup> is evaluated at every ε₂ point of the diagram, at the current ε₄. Runs of points that match NUBASE2020 (§9) are shaded green. The model has no way to compute the equilibrium shape; that would need a Strutinsky shell correction plus a liquid-drop energy. So the shading shows instead which deformations reproduce the measured spin. When you change the nucleus, ε₂ is set to a typical value: 0.27 for A = 150–190, 0.22 for A ≥ 222, 0.30 for A = 19–29, otherwise 0.</p>
+</article>
+
+<article class="card th" id="th-plot">
+<h2>12. Plotting details</h2>
+<ul>
+<li><b>Sampling:</b> curves are sampled at no more than about 900 points.</li>
+<li><b>Clipping:</b> before plotting, each curve is cut where it leaves the visible energy window. The exact crossing point is added, so autoscaling follows the physics rather than 1/r singularities or 10⁶ MeV walls.</li>
+<li><b>Visible window:</b> it covers all bound states, the threshold and the outer barrier. The radial range ends where the outermost wavefunction falls below 2 % of its maximum.</li>
+<li><b>Wavefunctions:</b> u(r) or |u|² is drawn on each energy line, scaled to at most 45 % of the smallest level spacing. The "Wavefunction size" slider multiplies this scale.</li>
+<li><b>Zoom:</b> it is kept while you move sliders. Double-click resets it.</li>
+<li><b>Level diagram labels:</b> labels are pushed apart in pixel units so they never overlap; the plot redraws when resized. The sweep and Nilsson labels use the same method.</li>
+<li><b>Themes:</b> the Night/Day choice is stored in localStorage and redraws every plot in the matching colours.</li>
+</ul>
+</article>
+
+<article class="card th" id="th-limits">
+<h2>13. Accuracy and limitations</h2>
+<ul>
+<li><b>Discretisation:</b> the finite-difference error is O(h²): E(h) ≈ E + c h². To check a result, double the grid points. The change should be about ¾ of the remaining error. Richardson extrapolation E ≈ [4E(h/2) − E(h)]/3 removes the leading term. Potentials with jumps (square wells) or 1/r singularities converge more slowly.</li>
+<li><b>Box size:</b> r<sub>max</sub> must be several decay lengths beyond the outer turning point, where the decay length is \(1/\kappa=\hbar/\sqrt{2\mu|E|}\). Loosely bound states, such as the deuteron at 2.2 MeV with 1/κ ≈ 4.3 fm, need large boxes. Watch for ⚠.</li>
+<li><b>Continuum:</b> scattering states and resonance widths are not calculated. States marked ≈ are box-dependent quasi-bound states.</li>
+<li><b>Shell model:</b> independent particles in a fixed spherical potential. There is no residual interaction, pairing, configuration mixing or core polarisation, so nuclei far from closed shells are poorly described.</li>
+<li><b>Nilsson model:</b> no pairing (BCS), no Coriolis mixing, and no decoupling of K = ½ bands. Couplings between oscillator shells are neglected for ε₄. The deformation is an input, not a result. The predicted spin is sensitive to the order of nearly degenerate orbitals near the Fermi level.</li>
+<li><b>Data:</b> NUBASE2020 masses marked # are extrapolations. Some measured spins are tentative.</li>
+</ul>
+</article>
+
+<article class="card th" id="th-refs">
+<h2>14. References</h2>
+<ol class="th-refs">
+<li>A. Bohr and B. R. Mottelson, <i>Nuclear Structure</i>, Vol. I (1969) and Vol. II (1975), Benjamin. Woods–Saxon parameters, isospin term, deformed single-particle motion.</li>
+<li>M. Goeppert Mayer, Phys. Rev. 75 (1949) 1969; O. Haxel, J. H. D. Jensen and H. E. Suess, Phys. Rev. 75 (1949) 1766. Spin–orbit origin of the magic numbers.</li>
+<li>R. D. Woods and D. S. Saxon, Phys. Rev. 95 (1954) 577. The Woods–Saxon potential.</li>
+<li>S. G. Nilsson, Dan. Mat. Fys. Medd. 29, no. 16 (1955). The deformed single-particle model.</li>
+<li>S. G. Nilsson and I. Ragnarsson, <i>Shapes and Shells in Nuclear Structure</i>, Cambridge University Press (1995). Stretched coordinates, matrix elements, asymptotic quantum numbers.</li>
+<li>T. Bengtsson and I. Ragnarsson, Nucl. Phys. A436 (1985) 14. The κ and μ parameters used here.</li>
+<li>L. W. Nordheim, Rev. Mod. Phys. 23 (1951) 322. Coupling rules for odd–odd nuclei.</li>
+<li>C. J. Gallagher and S. A. Moszkowski, Phys. Rev. 111 (1958) 1282. Coupling rule for deformed odd–odd nuclei.</li>
+<li>R. E. Langer, Phys. Rev. 51 (1937) 669. The Langer correction in WKB.</li>
+<li>W. Barth, R. S. Martin and J. H. Wilkinson, Numer. Math. 9 (1967) 386. Sturm-sequence bisection for tridiagonal matrices.</li>
+<li>F. G. Kondev, M. Wang, W. J. Huang, S. Naimi and G. Audi, Chin. Phys. C 45 (2021) 030001. NUBASE2020.</li>
+<li>P. Ring and P. Schuck, <i>The Nuclear Many-Body Problem</i>, Springer (1980). Mean-field theory, Koopmans' theorem, pairing.</li>
+</ol>
+</article>
+
     </div>
   </div>
 </section>
@@ -1402,7 +1762,11 @@ function shJP(){
   }
   const extra=differs?' <b>Why it can differ:</b> the simple model ignores the residual interaction between valence nucleons, mixing of nearby levels and nuclear deformation.':'';
   const syst=M.q==='syst'?' The NUBASE value is an estimate from systematics, not a measurement.':'';
-  const def=SH.A>=150&&SH.A<=190||SH.A>=222?' This nucleus is strongly deformed, so the spherical shell model is only a rough guide.':'';
+  const defReg=SH.A>=150&&SH.A<=190||SH.A>=222;
+  let def='';
+  if(defReg||NIL.eps!==0){ const gN=nilGround(SH.A,SH.Z,NIL.eps,NIL.e4), pN=Number.isFinite(gN.j2)?jpTxt(gN.j2,gN.par):'—';
+    def=(defReg?' This nucleus is strongly deformed, so the spherical result above is only a rough guide.':'')+
+      ` <b>Deformed (Nilsson) model</b> at ε₂ = ${NIL.eps.toFixed(2)}: J<sup>π</sup> = <b>${pN}</b>${M.opts.length&&pN!=='—'?(nilMatches(gN,M)?' <span class="jp-ok">✓ agrees</span>':' <span class="jp-no">✗ differs</span>'):''}. See the Nilsson diagram below.`; }
   $('jp-card').innerHTML=`<h2>Ground-state spin and parity of ${name} <span class="hint">Z = ${SH.Z}, N = ${SH.A-SH.Z}</span></h2><div class="jp-main"><span class="jp-big">J<sup>π</sup> = ${pred}</span>${cmp}</div><p class="jp-why">${g.why}${g.weak?' The weak rule is less reliable.':''}${extra}${syst}${def}</p>${rec?`<p class="note" style="margin-top:6px">${name}: ${fmtHalf(rec.T)}.</p>`:''}`;
 }
 /* Model vs measured separation energies. Model value: −E of the last filled level. */
@@ -1420,7 +1784,7 @@ function shExp(){
       `<p class="note">The model separation energy is minus the energy of the last filled level. Measured S<sub>n</sub> and S<sub>p</sub> are larger when the last nucleon completes a pair (pairing energy, about 12/√A ≈ ${(12/Math.sqrt(SH.A)).toFixed(1)} MeV here), which the single-particle model does not include. S<sub>2n</sub>/2 and S<sub>2p</sub>/2 average this out. Masses marked # in NUBASE are estimates. Charge radii are not part of NUBASE2020.</p>`
     :`<p class="note">${nucName(SH.A,SH.Z)} is not in NUBASE2020, so there is nothing to compare with.</p>`);
 }
-function shRender(){ shLevels(); shPlot(); shTable(); shMagic(); shJP(); shExp(); swMarkCurrent(); }
+function shRender(){ shLevels(); shPlot(); shTable(); shMagic(); nilRender(); shJP(); shExp(); swMarkCurrent(); }
 function shLevels(){
   const el=$('levels'), lv=SH.levels; if(!lv.length) return; if(!hasPlotly()) return noPlotly(el);
   const top=Math.max(0.8,lv[lv.length-1].E+1), y0=lv[0].E-1.5, H=el.clientHeight||620, ph=H-16-40, perPx=(top-y0)/ph, gap=15*perPx;
@@ -1635,6 +1999,210 @@ $('sw-run').addEventListener('click',()=>{ if(SW.running) swStop(); else swRun()
 ['sw-meas','sw-lab'].forEach(id=>$(id).addEventListener('change',swRender));
 ['sw-from','sw-to','sw-pts'].forEach(id=>$(id).addEventListener('keydown',e=>{ if(e.key==='Enter') swRun(); }));
 
+/* ── Nilsson model core (modified oscillator, stretched coordinates) ── */
+const NIL_PAR={ // Bengtsson & Ragnarsson, Nucl. Phys. A436 (1985) 14, by oscillator shell N = 0…7
+  p:{k:[0.120,0.120,0.105,0.090,0.065,0.060,0.054,0.054],m:[0,0,0,0.30,0.57,0.65,0.69,0.69]},
+  n:{k:[0.120,0.120,0.105,0.090,0.070,0.062,0.062,0.062],m:[0,0,0,0.25,0.39,0.43,0.34,0.26]}};
+const NIL_NMAX=7;
+const FACT=[1]; for(let i=1;i<=60;i++) FACT[i]=FACT[i-1]*i;
+/* Clebsch–Gordan ⟨j1 m1 j2 m2 | J M⟩ for integer arguments (Racah formula). */
+function cg(j1,m1,j2,m2,J,M){
+  if(m1+m2!==M||J<Math.abs(j1-j2)||J>j1+j2||Math.abs(m1)>j1||Math.abs(m2)>j2||Math.abs(M)>J) return 0;
+  const f=FACT;
+  const pre=Math.sqrt((2*J+1)*f[J+j1-j2]*f[J-j1+j2]*f[j1+j2-J]/f[j1+j2+J+1]*f[J+M]*f[J-M]*f[j1-m1]*f[j1+m1]*f[j2-m2]*f[j2+m2]);
+  let s=0;
+  for(let k=0;k<=j1+j2-J;k++){ const a=[k,j1+j2-J-k,j1-m1-k,j2+m2-k,J-j2+m1+k,J-j1-m2+k]; if(a.some(x=>x<0)) continue; s+=(k%2?-1:1)/a.reduce((p,x)=>p*f[x],1); }
+  return pre*s;
+}
+/* ⟨l Λ| P₂ |l' Λ⟩ and ⟨N l| ρ² |N l'⟩ within one oscillator shell */
+const angP2=(l,lp,L)=>Math.sqrt((2*lp+1)/(2*l+1))*cg(lp,0,2,0,l,0)*cg(lp,L,2,0,l,L);
+const angP4=(l,lp,L)=>Math.sqrt((2*lp+1)/(2*l+1))*cg(lp,0,4,0,l,0)*cg(lp,L,4,0,l,L);
+function rad2(N,l,lp){ if(l===lp) return N+1.5; const a=Math.min(l,lp); return Math.abs(l-lp)===2?-Math.sqrt((N-a)*(N+a+3)):0; }
+/* Symmetric eigenproblem (cyclic Jacobi). Returns ascending values and column vectors. */
+function jacobiEig(A0){
+  const n=A0.length, A=A0.map(r=>Float64Array.from(r)), V=[...Array(n)].map((_,i)=>{ const r=new Float64Array(n); r[i]=1; return r; });
+  for(let sweep=0;sweep<60;sweep++){
+    let off=0; for(let i=0;i<n;i++) for(let j=i+1;j<n;j++) off+=A[i][j]*A[i][j];
+    if(off<1e-22) break;
+    for(let p=0;p<n;p++) for(let q=p+1;q<n;q++){
+      if(Math.abs(A[p][q])<1e-14) continue;
+      const th=(A[q][q]-A[p][p])/(2*A[p][q]), t=Math.sign(th||1)/(Math.abs(th)+Math.sqrt(th*th+1)), c=1/Math.sqrt(t*t+1), s=t*c;
+      for(let k=0;k<n;k++){ const akp=A[k][p], akq=A[k][q]; A[k][p]=c*akp-s*akq; A[k][q]=s*akp+c*akq; }
+      for(let k=0;k<n;k++){ const apk=A[p][k], aqk=A[q][k]; A[p][k]=c*apk-s*aqk; A[q][k]=s*apk+c*aqk; }
+      for(let k=0;k<n;k++){ const vkp=V[k][p], vkq=V[k][q]; V[k][p]=c*vkp-s*vkq; V[k][q]=s*vkp+c*vkq; }
+    }
+  }
+  const idx=[...Array(n).keys()].sort((a,b)=>A[a][a]-A[b][b]);
+  return {vals:idx.map(i=>A[i][i]),vecs:idx.map(i=>V.map(r=>r[i]))};
+}
+/* Hamiltonian block for shell N and Ω = O2/2, in units of ℏω̊₀.
+   h = ω₀(ε)/ω̊₀ [N + 3/2 − (2/3) ε₂ ρ²P₂ + 2 ε₄ ρ²P₄] − 2κ l·s − κμ (l² − ⟨l²⟩_N),  basis |N l Λ Σ⟩.
+   Couplings between different N shells are neglected (exact for ε₂ in stretched coordinates). */
+function nilBlock(N,O2,eps,type,e4=0){
+  const P=NIL_PAR[type], kap=P.k[N], mu=P.m[N], w=Math.pow(1-eps*eps/3-2*eps*eps*eps/27,-1/3), B=[];
+  for(let l=N;l>=0;l-=2) for(const s2 of [1,-1]){ const L=(O2-s2)/2; if(Math.abs(L)<=l) B.push({l,L,s2}); }
+  const n=B.length, H=[...Array(n)].map(()=>new Float64Array(n)), Q=[...Array(n)].map(()=>new Float64Array(n));
+  for(let i=0;i<n;i++) for(let j=0;j<n;j++){
+    const a=B[i], b=B[j]; let v=0;
+    if(a.s2===b.s2&&a.L===b.L){ const r=rad2(N,a.l,b.l); if(r){ Q[i][j]=r*angP2(a.l,b.l,a.L); v-=(2/3)*eps*w*Q[i][j]; if(e4) v+=2*e4*w*r*angP4(a.l,b.l,a.L); } }
+    if(i===j) v+=w*(N+1.5)-kap*mu*(a.l*(a.l+1)-N*(N+3)/2)-kap*a.L*a.s2;
+    else if(a.l===b.l){
+      if(a.s2===1&&b.s2===-1&&b.L===a.L+1) v-=kap*Math.sqrt((a.l-a.L)*(a.l+a.L+1));
+      if(a.s2===-1&&b.s2===1&&a.L===b.L+1) v-=kap*Math.sqrt((b.l-b.L)*(b.l+b.L+1));
+    }
+    H[i][j]=v;
+  }
+  return {B,H,Q};
+}
+/* Orbital identities: for each block, the k-th eigenvalue is one curve (no crossings within a block).
+   Asymptotic labels Ω[N n_z Λ] come from the eigenvectors at large deformation, the spherical
+   label n l_j from the eigenvectors at ε = 0. */
+const NIL_ORB=(()=>{ const cache={};
+  return type=>{ if(cache[type]) return cache[type]; const out=[];
+    for(let N=0;N<=NIL_NMAX;N++) for(let O2=1;O2<=2*N+1;O2+=2){
+      const big=nilBlock(N,O2,1.0,type), eb=jacobiEig(big.H), sph=nilBlock(N,O2,0,type), es=jacobiEig(sph.H);
+      eb.vecs.forEach((v,k)=>{
+        let q=0,sig=0; for(let i=0;i<v.length;i++){ sig+=v[i]*v[i]*big.B[i].s2/2; for(let j=0;j<v.length;j++) q+=v[i]*big.Q[i][j]*v[j]; }
+        const Sg=sig>0?0.5:-0.5, Lam=O2/2-Sg, nzf=(2/3)*q+(N+1.5)/3-0.5;
+        let nz=Math.round(nzf); if((N-nz-Lam)%2!==0) nz+= nzf>nz?1:-1; nz=Math.max(0,Math.min(N-Lam,nz));
+        const u=es.vecs[k]; let l2=0,ls=0; u.forEach((c,i)=>{ const b=sph.B[i]; l2+=c*c*b.l; ls+=c*c*b.L*b.s2/2; });
+        let best=0,bi=0; u.forEach((c,i)=>{ if(c*c>best){ best=c*c; bi=i; } }); const l=sph.B[bi].l;
+        // j from ⟨l·s⟩ incl. off-diagonal part: use energy-independent rule via total ⟨l·s⟩ = [j(j+1)−l(l+1)−3/4]/2
+        let lsTot=0; for(let i=0;i<u.length;i++) for(let j=0;j<u.length;j++){ const a=sph.B[i], b=sph.B[j]; if(a.l!==b.l) continue;
+          if(i===j) lsTot+=u[i]*u[j]*a.L*a.s2/2;
+          else if(a.s2===1&&b.s2===-1&&b.L===a.L+1) lsTot+=u[i]*u[j]*0.5*Math.sqrt((a.l-a.L)*(a.l+a.L+1));
+          else if(a.s2===-1&&b.s2===1&&a.L===b.L+1) lsTot+=u[i]*u[j]*0.5*Math.sqrt((b.l-b.L)*(b.l+b.L+1)); }
+        const j2=l===0?1:lsTot>0?2*l+1:2*l-1;
+        out.push({N,O2,k,nz,Lam,Sg,par:N%2?-1:1,l,j2,sph:((N-l)/2+1)+'spdfghijk'[l]+j2+'/2',asym:`${O2}/2${N%2?'⁻':'⁺'}[${N}${nz}${Lam}]`});
+      });
+    }
+    return cache[type]=out; }; })();
+/* All orbital energies (ℏω̊₀ units) at deformation ε, in NIL_ORB order. */
+function nilEnergies(eps,type,e4=0){
+  const E=[]; for(let N=0;N<=NIL_NMAX;N++) for(let O2=1;O2<=2*N+1;O2+=2){ const {H}=nilBlock(N,O2,eps,type,e4); jacobiEig(H).vals.forEach(v=>E.push(v)); }
+  return E;
+}
+/* Orbital holding the k-th nucleon (1-based) at deformation ε; each orbital takes 2 (±Ω). */
+function nilOrbitFor(eps,type,k,e4=0){
+  const E=nilEnergies(eps,type,e4), orb=NIL_ORB(type), idx=[...E.keys()].sort((a,b)=>E[a]-E[b]), i=idx[Math.floor((k-1)/2)];
+  return i===undefined?null:{...orb[i],E:E[i]};
+}
+
+/* ── Nilsson diagram UI ── */
+const NIL={eps:0,e4:0,key:'',from:-0.3,to:0.5,pts:81};
+const OM_COL_N=['#38d3f5','#f472b6','#a3e635','#fb923c','#c084fc','#facc15','#2dd4bf','#f87171'];
+const OM_COL_D=['#00707F','#A3124A','#4D7C0F','#B45309','#6D28D9','#8A5200','#0F766E','#B42318'];
+const omCol=O2=>(isDay()?OM_COL_D:OM_COL_N)[((O2-1)/2)%8];
+const hw0=A=>41*Math.pow(A,-1/3);
+/* typical deformation for a first look; the user should move it */
+function nilDefaultEps(A){ return (A>=150&&A<=190)?0.27:(A>=222)?0.22:(A>=19&&A<=29)?0.30:0; }
+/* Ground-state Jπ from the Nilsson model at (ε₂, ε₄) for nucleus (A, Z). */
+function nilGround(A,Z,eps,e4){
+  const N0=A-Z;
+  if(Z%2===0&&N0%2===0) return {j2:0,par:1,txt:'Even–even: all nucleons paired, J<sup>π</sup> = 0⁺.'};
+  if(Z%2!==N0%2){ const t=Z%2?'p':'n', k=Z%2?Z:N0, o=nilOrbitFor(eps,t,k,e4);
+    if(!o) return {j2:NaN,txt:'Too many nucleons for the oscillator shells included.'};
+    return {j2:o.O2,par:o.par,orb:o,txt:`The odd ${t==='p'?'proton':'neutron'} (number ${k}) sits in <b>${o.asym}</b>, which comes from the spherical <b>${sub(o.sph)}</b> level. The band head has I = K = Ω, so J<sup>π</sup> = ${jpTxt(o.O2,o.par)}.`}; }
+  const p=nilOrbitFor(eps,'p',Z,e4), n=nilOrbitFor(eps,'n',N0,e4); if(!p||!n) return {j2:NaN,txt:'Too many nucleons for the oscillator shells included.'};
+  const par=p.par*n.par, same=p.Sg===n.Sg, K2=same?p.O2+n.O2:Math.abs(p.O2-n.O2);
+  return {j2:K2,par,txt:`Odd proton in <b>${p.asym}</b>, odd neutron in <b>${n.asym}</b>. Their intrinsic spins are ${same?'parallel':'antiparallel'} (Σ<sub>p</sub> = ${p.Sg>0?'+':'−'}½, Σ<sub>n</sub> = ${n.Sg>0?'+':'−'}½), so the Gallagher–Moszkowski rule gives K = ${same?'Ω<sub>p</sub> + Ω<sub>n</sub>':'|Ω<sub>p</sub> − Ω<sub>n</sub>|'} = ${K2/2}, J<sup>π</sup> = ${jpTxt(K2,par)}.`};
+}
+function nilMatches(g,M){ return Number.isFinite(g.j2)&&M.opts.some(o=>o.j2===g.j2&&(o.par===0||o.par===g.par)); }
+function nilSyncInputs(){
+  $('nil-eps').value=NIL.eps; $('nil-eps-v').textContent=(NIL.eps>=0?'+':'')+NIL.eps.toFixed(2)+'  (β₂ ≈ '+(NIL.eps/0.95).toFixed(2)+')';
+  $('nil-e4').value=NIL.e4; $('nil-e4-v').textContent=(NIL.e4>=0?'+':'')+NIL.e4.toFixed(3);
+  $('nil-from').value=NIL.from; $('nil-to').value=NIL.to;
+}
+function nilResult(){
+  const A=SH.A, Z=SH.Z, g=nilGround(A,Z,NIL.eps,NIL.e4), rec=nb(Z,A), M=parseJP(rec&&rec.J), name=nucName(A,Z);
+  let v=''; if(rec&&M.opts.length&&Number.isFinite(g.j2)) v=` NUBASE2020: <b>${M.text}</b>${QTAG[M.q]||''} ${nilMatches(g,M)?'<span class="jp-ok">✓ agrees</span>':'<span class="jp-no">✗ differs</span>'}`;
+  $('nil-result').innerHTML=`<span class="jp-meas">${name} at ε₂ = ${NIL.eps.toFixed(2)}, ε₄ = ${NIL.e4.toFixed(3)}: <b style="color:var(--accent);font-family:var(--font-num)">J<sup>π</sup> = ${Number.isFinite(g.j2)?jpTxt(g.j2,g.par):'—'}</b>${v}</span><p class="jp-why" style="margin-top:4px">${g.txt}</p>`;
+  return g;
+}
+function nilRender(){
+  const el=$('nil-plot'); if(!el) return;
+  const A=SH.A, Z=SH.Z, N0=A-Z, key=A+'|'+Z;
+  if(key!==NIL.key){ NIL.key=key; NIL.eps=nilDefaultEps(A); }
+  nilSyncInputs(); nilResult();
+  if(!hasPlotly()) return noPlotly(el);
+  const type=SH.type, fill=type==='n'?N0:Z, orb=NIL_ORB(type), H=hw0(A);
+  let a=Math.max(-0.45,Math.min(NIL.from,NIL.to)), b=Math.min(0.7,Math.max(NIL.from,NIL.to)); if(b-a<0.05) b=a+0.05;
+  const n=NIL.pts, xs=[...Array(n)].map((_,i)=>+(a+(b-a)*i/(n-1)).toFixed(4));
+  const Es=xs.map(x=>nilEnergies(x,type,NIL.e4));
+  const fermi=Es.map(E=>{ if(fill<1) return null; const s=[...E].sort((p,q)=>p-q); return s[Math.floor((fill-1)/2)]??null; });
+  const fv=fermi.filter(v=>v!==null); if(!fv.length){ emptyPlot(el,'No nucleons of this type to place.'); return; }
+  const y0=Math.min(...fv)-0.75, y1=Math.max(...fv)+0.75;
+  const T=[], ann=[], shapes=[], rec=nb(Z,A), M=parseJP(rec&&rec.J);
+  /* where the predicted Jπ agrees with NUBASE2020 */
+  if($('nil-band').checked&&rec&&M.opts.length){
+    let run=-1; const ok=xs.map(x=>nilMatches(nilGround(A,Z,x,NIL.e4),M)), dx=(xs[1]-xs[0])/2;
+    for(let i=0;i<=n;i++){ const o=i<n&&ok[i]; if(o&&run<0) run=i; if(!o&&run>=0){ shapes.push({type:'rect',xref:'x',yref:'paper',x0:xs[run]-dx,x1:xs[i-1]+dx,y0:0,y1:1,fillcolor:cssv('--good'),opacity:0.12,line:{width:0},layer:'below'}); run=-1; } }
+  }
+  shapes.push({type:'line',x0:0,x1:0,yref:'paper',y0:0,y1:1,line:{color:cssv('--plot-axis'),width:1}});
+  shapes.push({type:'line',x0:NIL.eps,x1:NIL.eps,yref:'paper',y0:0,y1:1,line:{color:cssv('--warn'),width:1.5,dash:'dot'}});
+  const lab=$('nil-lab').checked, ends=[], sph=new Map(), i0=xs.reduce((bi,x,i)=>Math.abs(x)<Math.abs(xs[bi])?i:bi,0);
+  orb.forEach((o,k)=>{
+    const ys=Es.map(E=>E[k]); if(Math.max(...ys)<y0-0.3||Math.min(...ys)>y1+0.3) return;
+    const c=omCol(o.O2);
+    T.push({x:xs,y:ys,mode:'lines',line:{color:c,width:1.7,dash:o.par<0?'dash':'solid'},meta:k,
+      hovertemplate:`<b>${o.asym}</b>  (from ${supL(o.sph)})<br>ε₂ = %{x:.3f}<br>E = %{y:.3f} ℏω̊₀ = %{customdata:.2f} MeV<extra></extra>`,customdata:ys.map(v=>v*H)});
+    const ye=ys[n-1]; if(lab&&ye>y0&&ye<y1) ends.push({x:xs[n-1],y:ye,xanchor:'left',xshift:4,showarrow:false,text:o.asym,font:{size:10.5,color:c}});
+    const ys0=ys[i0]; if(lab&&Math.abs(xs[i0])<1e-6&&ys0>y0&&ys0<y1&&!sph.has(o.sph)) sph.set(o.sph,ys0);
+  });
+  T.push({x:xs,y:fermi,mode:'lines',line:{color:cssv('--veff'),width:3.2},hovertemplate:`Fermi level (last filled orbital)<br>ε₂ = %{x:.3f}<br>E = %{y:.3f} ℏω̊₀<extra></extra>`});
+  /* spread the right-hand labels */
+  const Hpx=(el.clientHeight||640)-58, gap=12.5*(y1-y0)/Hpx; ends.sort((p,q)=>p.y-q.y);
+  for(let i=1;i<ends.length;i++) if(ends[i].y-ends[i-1].y<gap) ends[i].y=ends[i-1].y+gap;
+  if(ends.length&&ends[ends.length-1].y>y1-0.4*gap){ ends[ends.length-1].y=y1-0.4*gap; for(let i=ends.length-2;i>=0;i--) if(ends[i+1].y-ends[i].y<gap) ends[i].y=ends[i+1].y-gap; }
+  ann.push(...ends);
+  const sl=[...sph].sort((p,q)=>p[1]-q[1]).map(([s,y])=>({x:0,y,xanchor:'right',xshift:-3,yshift:6,showarrow:false,text:supL(s),font:{size:10.5,color:cssv('--text-2')},bgcolor:cssv('--plot-bg')}));
+  for(let i=1;i<sl.length;i++) if(sl[i].y-sl[i-1].y<gap) sl[i].y=sl[i-1].y+gap;
+  ann.push(...sl);
+  ann.push({xref:'paper',yref:'paper',x:0.01,y:0.99,xanchor:'left',yanchor:'top',showarrow:false,text:'← oblate',font:{size:11.5,color:cssv('--muted')}},
+           {xref:'paper',yref:'paper',x:0.85,y:0.99,xanchor:'right',yanchor:'top',showarrow:false,text:'prolate →',font:{size:11.5,color:cssv('--muted')}});
+  const L=baseLayout('Quadrupole deformation ε₂',(type==='n'?'Neutron':'Proton')+' energy (ℏω̊₀ = '+H.toFixed(2)+' MeV)');
+  L.xaxis.range=[a,b]; L.xaxis.autorange=false; L.yaxis.range=[y0,y1]; L.yaxis.autorange=false;
+  L.shapes=shapes; L.annotations=ann; L.margin={l:62,r:86,t:12,b:46};
+  L.uirevision='nil|'+key+'|'+type+'|'+a+'|'+b;
+  Plotly.react(el,T,L,{...PCFG,toImageButtonOptions:{format:'png',scale:2,filename:'nilsson-'+nucName(A,Z).replace(/[^\w]/g,'')}});
+  once(el,'plotly_click',d=>{ const p=d.points&&d.points[0]; if(p&&Number.isFinite(p.x)){ NIL.eps=Math.round(p.x*100)/100; nilRender(); shJP(); } });
+  const om=[]; for(let O2=1;O2<=Math.min(15,2*NIL_NMAX+1);O2+=2) om.push(`<span><i style="background:${omCol(O2)}"></i>Ω = ${O2}/2</span>`);
+  $('nil-legend').innerHTML=`<span><i style="background:${cssv('--veff')};height:4px"></i>Fermi level (N or Z = ${fill})</span>`+om.join('')+
+    `<span><i style="background:var(--muted)"></i>solid π = +, dashed π = −</span><span><i style="background:var(--good);opacity:.4;height:10px"></i>ε₂ where predicted J<sup>π</sup> matches NUBASE2020</span><span><i style="background:var(--warn)"></i>Current ε₂</span>`;
+}
+$('nil-eps').addEventListener('input',e=>{ NIL.eps=+e.target.value; clearTimeout(NIL.t); NIL.t=setTimeout(()=>{ nilRender(); shJP(); },30); });
+$('nil-e4').addEventListener('input',e=>{ NIL.e4=+e.target.value; clearTimeout(NIL.t); NIL.t=setTimeout(()=>{ nilRender(); shJP(); },60); });
+['nil-from','nil-to'].forEach(id=>$(id).addEventListener('change',()=>{ const f=+$('nil-from').value, t=+$('nil-to').value; if(Number.isFinite(f)) NIL.from=Math.max(-0.45,Math.min(0.7,f)); if(Number.isFinite(t)) NIL.to=Math.max(-0.45,Math.min(0.7,t)); nilRender(); }));
+['nil-band','nil-lab'].forEach(id=>$(id).addEventListener('change',nilRender));
+$('nil-reset').addEventListener('click',()=>{ NIL.eps=nilDefaultEps(SH.A); NIL.e4=0; nilRender(); shJP(); });
+
+/* ════════════════════════════════════════════════════════════════
+   THEORY TAB
+   ════════════════════════════════════════════════════════════════ */
+let thReady=false;
+function thBuildPotlib(){
+  const box=$('th-potlib-list'); if(!box) return;
+  box.innerHTML=POT_GROUPS.map(g=>`<h3>${g.label}</h3>`+g.pots.map(p=>`<div class="th-pot"><h4><span class="swatch" style="background:${p.defaultColor}"></span>${p.name}</h4><div class="formula">${p.formula}</div><p>${p.physics.what}</p><p class="prm">${p.params.map(q=>`${q.label}${q.unit?' ['+q.unit+']':''}: ${q.min} … ${q.max}, default ${q.value}`).join('<br>')}</p></div>`).join('')).join('');
+}
+function thTypeset(){
+  const sec=$('mode-theory');
+  if(window.MathJax&&MathJax.typesetPromise){ MathJax.typesetPromise([sec]).then(()=>{ $('th-mj-note').textContent='Equations typeset with MathJax.'; }).catch(()=>{}); return true; }
+  return false;
+}
+function thOpen(){
+  if(!thReady){ thReady=true; thBuildPotlib();
+    let tries=0; (function wait(){ if(thTypeset()) return; if(++tries<50) setTimeout(wait,200); else $('th-mj-note').textContent='MathJax could not be loaded, so equations are shown as TeX source. Check the internet connection and reload.'; })();
+  }
+}
+/* highlight the current section in the contents list */
+(function(){
+  const links=[...document.querySelectorAll('.th-toc a')];
+  links.forEach(a=>a.addEventListener('click',e=>{ const t=document.getElementById(a.getAttribute('href').slice(1)); if(t){ e.preventDefault(); t.scrollIntoView({behavior:'smooth',block:'start'}); try{ history.replaceState(null,'',a.getAttribute('href')); }catch(_){} } }));
+  if(!('IntersectionObserver' in window)) return;
+  const io=new IntersectionObserver(es=>{ es.forEach(en=>{ if(en.isIntersecting){ links.forEach(a=>a.classList.toggle('on',a.getAttribute('href')==='#'+en.target.id)); } }); },{rootMargin:'-80px 0px -70% 0px'});
+  document.querySelectorAll('.th').forEach(a=>io.observe(a));
+})();
+
 /* shell controls */
 $('sh-preset').addEventListener('change',e=>{ if(e.target.value==='custom'){ SH.meas=''; shJP(); shExp(); return; } const [A,Z,m]=e.target.value.split(','); SH.A=+A; SH.Z=+Z; SH.meas=m; $('sh-A').value=A; $('sh-Z').value=Z; SH.sel=-1; shCompute(); swDefaults(); swRun(); });
 ['sh-A','sh-Z'].forEach(id=>$(id).addEventListener('change',()=>{ const A=Math.max(4,Math.min(300,+$('sh-A').value||4)), Z=Math.max(1,Math.min(A-1,+$('sh-Z').value||1)); SH.A=A; SH.Z=Z; $('sh-A').value=A; $('sh-Z').value=Z; $('sh-preset').value='custom'; SH.meas=''; SH.sel=-1; shCompute(); swDefaults(); swRun(); }));
@@ -1650,7 +2218,9 @@ document.querySelector('.tabs').addEventListener('click',e=>{
   const b=e.target.closest('.tab'); if(!b) return;
   document.querySelectorAll('.tab').forEach(t=>{ const on=t===b; t.classList.toggle('on',on); t.setAttribute('aria-selected',on); });
   document.querySelectorAll('.mode').forEach(m=>m.classList.toggle('on',m.id==='mode-'+b.dataset.mode));
-  if(b.dataset.mode==='shell'){ if(!shReady){ shReady=true; shCompute(); swDefaults(); swRun(); } else { shRender(); swRender(); } } else { renderPlot(); if(hasPlotly()) Plotly.Plots.resize($('plot')); }
+  if(b.dataset.mode==='shell'){ if(!shReady){ shReady=true; shCompute(); swDefaults(); swRun(); } else { shRender(); swRender(); } }
+  else if(b.dataset.mode==='theory'){ thOpen(); }
+  else { renderPlot(); if(hasPlotly()) Plotly.Plots.resize($('plot')); }
   try{ history.replaceState(null,'','#'+b.dataset.mode); }catch(_){}
 });
 (function(){
@@ -1666,6 +2236,7 @@ let rsT=null; window.addEventListener('resize',()=>{ clearTimeout(rsT); rsT=setT
 /* start */
 buildLibrary(); renderInfo(); syncJ(); setTwoBody({p1:'N',p2:'inf'});
 if(location.hash==='#shell') document.querySelector('.tab[data-mode="shell"]').click();
+else if(location.hash.startsWith('#th')) { document.querySelector('.tab[data-mode="theory"]').click(); const t=document.getElementById(location.hash.slice(1)); if(t&&location.hash!=='#theory') setTimeout(()=>t.scrollIntoView(),300); }
 compute();
 </script>
 </body>
