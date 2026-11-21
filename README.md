@@ -1,4 +1,4 @@
-# [Nuclear Shell Model: Bound States and Shell Structure](https://obayrak.github.io/ShellModel/)
+# [Nuclear Shell Model: Bound States and Shell Structure](https://obayrak.github.io/Shell-Model/)
 
 **▶ Live app: [obayrak.github.io/Shell-Model](https://obayrak.github.io/Shell-Model/)**
 
