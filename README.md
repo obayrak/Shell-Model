@@ -1,6 +1,6 @@
 # [Nuclear Shell Model: Bound States and Shell Structure](https://obayrak.github.io/ShellModel/)
 
-**▶ Live app: [obayrak.github.io/ShellModel](https://obayrak.github.io/ShellModel/)**
+**▶ Live app: [obayrak.github.io/ShellModel](https://obayrak.github.io/Shell-Model/)**
 
 An interactive browser simulator that solves the radial Schrödinger equation for 17 nuclear and atomic potentials. It shows bound-state energies and wavefunctions, compares them with WKB and exact results, and builds the nuclear shell model with its magic numbers.
 
